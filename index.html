@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+
+</html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LabelCompress</title>
+    <style>
+        #canvas {
+            margin: auto;
+            display: flex;
+        }
+
+        html {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            margin-left: 15px;
+            margin-right: 15px;
+        }
+
+        #canvas-padding-top,
+        #canvas-padding-bottom {
+            width: 100px;
+        }
+
+        input[type=file] {
+            display: none;
+        }
+
+        #file-btn {
+            border: 1px black solid;
+            border-radius: 5px;
+            padding: 5px;
+            margin-left: 5px;
+            margin-bottom: 5px;
+            background-color: lightgray;
+        }
+
+        #file-btn:hover {
+            background-color: gray;
+            cursor: pointer;
+        }
+
+        #first {
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <script src="/javascript/site.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.worker.min.js"></script>
+    <script src="https://cozmo.github.io/jsQR/jsQR.js"></script>
+    <div class="cookies" name="cookie-popup" id="cookies">
+        <h3>Cookies</h3>
+        <hr>
+        <p>This website uses cookies to save your preferences.</p>
+        <button value="false" class="cookie-consent-deny cookiesbtn" id="dontallow">Deny Cookies</button>
+        <button value="true" class="cookie-consent-allow cookiesbtn" id="allow">Allow Cookies</button>
+        <hr>
+        <br>
+        <br>
+    </div>
+    <br>
+    <input type="file" id="file-pdf" accept=".pdf">
+    <label for="file-pdf" id="file-btn">Select File</label>
+    <span id="file-name">&nbsp;No file chosen.</span>
+    <br>
+    <label for="first" id="degrees">Degrees: </label>
+    <input type="radio" name="radio" class="rotational" id="first" value="0">0&deg;
+    <input type="radio" name="radio" class="rotational" value="90">90&deg;
+    <input type="radio" name="radio" class="rotational" value="180">180&deg;
+    <input type="radio" name="radio" class="rotational" value="270">270&deg;
+    <input type="radio" name="radio" class="rotational" value="360">360&deg;
+    <a id="downloadLink" style="display: none;">Download Rotated PDF</a>
+    <a id="printLink" style="display: none;" href="#" onclick="return false;">Print Rotated PDF</a>
+    <br>
+    <div id="canvas-padding-top" hidden></div>
+    <canvas class="image_canvas" id="canvas" style="border:1px solid black"></canvas>
+    <div id="canvas-padding-bottom" hidden></div>
+    <script type="module">
+        import { PDFDocument, degrees } from 'https://cdn.skypack.dev/pdf-lib@^1.11.1';
+
+        let imageWidthGlobal;
+        let imageHeightGlobal;
+
+        function base64ToArrayBuffer(base64)
+        {
+            var binaryString = atob(base64);
+            var bytes = new Uint8Array(binaryString.length);
+            for (var i = 0; i < binaryString.length; i++)
+            {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        let file;
+        let blob;
+        let base64;
+        let pdfBase64;
+
+        async function rotatePDF(decodedData, width, height)
+        {
+            const fileInput = document.getElementById('file-pdf');
+            if (!fileInput || !fileInput.files || fileInput.files.length === 0)
+            {
+                console.error('No file selected.');
+                return;
+            }
+            const pdfDoc = await PDFDocument.create();
+            decodedData = await decodedData.replace("data:image/png;base64,", "");
+            pdfBase64 = decodedData;
+            const pngImage = await pdfDoc.embedPng(base64ToArrayBuffer(decodedData));
+            const pdfPage = pdfDoc.addPage([width, height]);
+            pdfPage.drawImage(pngImage, {
+                x: 0,
+                y: 0,
+                width: width,
+                height: height
+            });
+            let rotationalEle = document.getElementsByClassName("rotational");
+            let deg = 0;
+            for (let item of rotationalEle)
+            {
+                if (item.checked)
+                {
+                    deg = item.value;
+                }
+            }
+            RotateCanvas(deg);
+            for (let i = 0; i < pdfDoc.getPages().length; i++)
+            {
+                const page = pdfDoc.getPage(i);
+                await page.setRotation(degrees(Number(deg)));
+            }
+
+            const modifiedPdfBytes = await pdfDoc.save();
+
+            blob = new Blob([modifiedPdfBytes], { type: 'application/pdf' });
+            const downloadLink = document.getElementById('downloadLink');
+            downloadLink.href = URL.createObjectURL(blob);
+            downloadLink.download = "Output_" + file.name;
+            downloadLink.style.display = 'block';
+
+            const printLink = document.getElementById('printLink');
+            printLink.style.display = 'block';
+        }
+
+        function readFileAsArrayBuffer(file)
+        {
+            return new Promise((resolve, reject) =>
+            {
+                const reader = new FileReader();
+                reader.onload = (event) => resolve(event.target.result);
+                reader.onerror = (error) => reject(error);
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        function addAlphaChannelToUnit8ClampedArray(unit8Array, imageWidth, imageHeight)
+        {
+            const newImageData = new Uint8ClampedArray(imageWidth * imageHeight * 4);
+
+            for (let j = 0, k = 0, jj = imageHeight * imageWidth * 4; j < jj;)
+            {
+                newImageData[j++] = unit8Array[k++];
+                newImageData[j++] = unit8Array[k++];
+                newImageData[j++] = unit8Array[k++];
+                newImageData[j++] = 255;
+            }
+
+            return newImageData;
+        }
+
+        async function getPageImages(pageNum, pdfDocumentInstance)
+        {
+            try
+            {
+                const pdfPage = await pdfDocumentInstance.getPage(pageNum);
+                const operatorList = await pdfPage.getOperatorList();
+
+                const validObjectTypes = [
+                    pdfjsLib.OPS.paintImageXObject, // 85
+                    pdfjsLib.OPS.paintImageXObjectRepeat, // 88
+                    pdfjsLib.OPS.paintJpegXObject //82
+                ];
+
+                operatorList.fnArray
+                    .forEach((element, idx) =>
+                    {
+                        if (validObjectTypes.includes(element))
+                        {
+                            const imageName = operatorList.argsArray[idx][0];
+                            console.log('page', pageNum, 'imageName', imageName);
+
+                            pdfPage.objs.get(imageName, async (image) =>
+                            {
+                                const imageUnit8Array = image.data;
+                                const imageWidth = image.width;
+                                const imageHeight = image.height;
+                                const imageUint8ArrayWithAlphaChanel = addAlphaChannelToUnit8ClampedArray(imageUnit8Array, imageWidth, imageHeight);
+                                const imageData = new ImageData(imageUint8ArrayWithAlphaChanel, imageWidth, imageHeight);
+
+                                const canvas = document.getElementById('canvas');
+                                canvas.hidden = false;
+                                canvas.width = imageWidth;
+                                canvas.height = imageHeight;
+                                imageHeightGlobal = imageHeight;
+                                imageWidthGlobal = imageWidth;
+                                const ctx = canvas.getContext('2d');
+                                ctx.putImageData(imageData, 0, 0);
+                                console.log('canvas > toDataURL', canvas.toDataURL());
+                                const img = canvas.toDataURL();
+                                base64 = img;
+                                const aDownloadLink = document.createElement('a');
+
+                                aDownloadLink.download = 'canvas_image.png';
+                                aDownloadLink.href = img;
+                                const decodedData = jsQR(imageUint8ArrayWithAlphaChanel, imageWidth, imageHeight);
+
+                                if (decodedData)
+                                {
+                                    const outputElement = document.getElementById('output');
+                                    outputElement.innerHTML += `${JSON.stringify(decodedData.data, null, 2)}\n`;
+                                    console.log('decodedData', decodedData.data);
+                                }
+                                rotatePDF(img, imageWidth, imageHeight);
+                            });
+                        }
+                    });
+            } catch (error)
+            {
+                console.log(error);
+            }
+        }
+
+        const onLoadFile = async event =>
+        {
+            try
+            {
+                const typedArray = new Uint8Array(event.target.result);
+
+                const loadingPdfDocument = pdfjsLib.getDocument(typedArray);
+                const pdfDocumentInstance = await loadingPdfDocument.promise;
+
+                const totalNumPages = pdfDocumentInstance.numPages;
+                const pagesPromises = [];
+
+                for (let currentPage = 1; currentPage <= totalNumPages; currentPage += 1)
+                {
+                    pagesPromises.push(getPageImages(currentPage, pdfDocumentInstance));
+                }
+
+                const pagesData = await Promise.all(pagesPromises);
+
+            } catch (error)
+            {
+                console.log(error);
+            }
+        };
+        let rotcanvas = 0;
+        let input = document.getElementById('file-pdf');
+        input.onclick = function ()
+        {
+            this.value = null;
+        };
+
+        input.addEventListener('input', event =>
+        {
+            file = event.target.files[0];
+            document.getElementById("file-name").textContent = file.name;
+            if (file.type !== 'application/pdf')
+            {
+                alert(`File ${file.name} is not a PDF file type`);
+                return;
+            }
+
+            const fileReader = new FileReader();
+            fileReader.onload = onLoadFile;
+            fileReader.readAsArrayBuffer(file);
+        });
+
+        document.getElementById("printLink").addEventListener("click", event =>
+        {
+            printPdf(URL.createObjectURL(blob));
+        });
+
+        let padding_top = document.getElementById("canvas-padding-top");
+        let padding_bottom = document.getElementById("canvas-padding-bottom");
+
+        function RotateCanvas(rotcanvas)
+        {
+            let canv = document.getElementById("canvas");
+            console.log(file);
+            if (file != undefined)
+            {
+                let percent = "70%";
+                if (window.innerHeight < 1200 && window.innerHeight > 600)
+                {
+                    percent = "50%";
+                }
+                canv.style.height = percent;
+                canv.style.width = percent;
+
+                padding_top.style.height = (canv.clientHeight / 60) + "rem";
+                padding_bottom.style.height = (canv.clientHeight / 50) + "rem";
+                padding_top.style.marginLeft = "auto";
+                padding_top.style.marginRight = "auto";
+                padding_bottom.style.marginLeft = "auto";
+                padding_bottom.style.marginRight = "auto";
+                padding_top.hidden = false;
+                padding_bottom.hidden = false;
+            }
+            else if (file != undefined)
+            {
+                canv.style.height = imageHeightGlobal * .7 + "px";
+                canv.style.width = imageWidthGlobal * .7 + "px";
+                padding_top.style.height = "0px";
+                padding_bottom.style.height = "0px";
+            }
+            if (file != undefined)
+            {
+                canv.style.transform = "rotate(" + rotcanvas + "deg)";
+            }
+        }
+
+        let allowCookies = false;
+        let allowCookiesbtn = document.getElementById("allow");
+        let denyCookiesbtn = document.getElementById("dontallow");
+        let cookiesDiv = document.getElementById("cookies");
+
+        allowCookiesbtn.addEventListener('click', () =>
+        {
+            cookiesDiv.hidden = true;
+            allowCookies = true;
+            const expiry = new Date();
+            expiry.setTime(expiry.getTime() + (120 * 24 * 60 * 60 * 1000));
+            document.cookie = "allowcookies=" + allowCookies + ";" + "expires=" + expiry;
+        })
+
+        denyCookiesbtn.addEventListener('click', () =>
+        {
+            cookiesDiv.hidden = true;
+        })
+
+        var inputs = document.querySelectorAll("input[type=radio]"),
+            x = inputs.length;
+        while (x--)
+            inputs[x].addEventListener("change", function ()
+            {
+                console.log("Checked: " + this.checked);
+                console.log("Name: " + this.name);
+                console.log("Value: " + this.value);
+                console.log("Parent: " + this.parent);
+                RotateCanvas(this.value);
+                rotatePDF(pdfBase64, imageWidthGlobal, imageHeightGlobal);
+                const expiry = new Date();
+                expiry.setTime(expiry.getTime() + (120 * 24 * 60 * 60 * 1000));
+                document.cookie = "rotational=" + this.value + ";" + "expires=" + expiry;
+            }, 0);
+
+        let rotationalEle = document.getElementsByClassName("rotational");
+    </script>
+    <script>
+        /**
+         * Prints a PDF in a browser using a hidden iframe. Works in recent versions of Firefox, Chrome, Safari and Edge. Does
+         * not work in IE 11 and instead attempts to open the PDF in a new tab.
+         *
+         * Note that the PDF URL must come from the same domain as the page including this file because of the same-origin
+         * policy.
+         *
+         * Usage: printPdf(url)
+         */
+        var printPdf = (function ()
+        {
+            // Firefox requires a delay between loading the iframe and calling print(), otherwise it fails with an uncatchable
+            // error. This makes it a rare case where user agent sniffing is justified.
+            var isFirefox = /Gecko\/\d/.test(navigator.userAgent);
+
+            // Specify the aforementioned delay for Firefox. 1000 seems to work. 100 is not enough.
+            var firefoxDelay = 1000;
+
+            var iframe;
+
+            return function (url)
+            {
+                // Remove iframe from any previous call
+                if (iframe)
+                {
+                    iframe.parentNode.removeChild(iframe);
+                }
+
+                iframe = document.createElement("iframe");
+                iframe.style.cssText = "width: 1px; height: 100px; position: fixed; left: 0; top: 0; opacity: 0; border-width: 0; margin: 0; padding: 0";
+
+                var xhr = new XMLHttpRequest();
+                try
+                {
+                    xhr.responseType = "arraybuffer";
+                } catch (e)
+                {
+                    // This is probably IE 11, in which case we can go no further and just open the PDF in a new tab
+                    window.open(url, "_blank");
+                    return;
+                }
+
+                xhr.addEventListener("load", function ()
+                {
+                    if (xhr.status === 200 || xhr.status === 201)
+                    {
+                        var pdfBlob = new Blob([xhr.response], { type: "application/pdf" });
+                        var iframeUrl = URL.createObjectURL(pdfBlob);
+                        iframe.src = iframeUrl;
+
+                        iframe.addEventListener("load", function ()
+                        {
+                            function printIframe()
+                            {
+                                try
+                                {
+                                    iframe.focus()
+                                    try
+                                    {
+                                        iframe.contentWindow.document.execCommand("print", false, null);
+                                    } catch (e)
+                                    {
+                                        iframe.contentWindow.print();
+                                    }
+                                } catch (error)
+                                {
+                                    console.error("Print failed: " + error, error);
+                                } finally
+                                {
+                                    iframe.style.visibility = "hidden";
+                                    iframe.style.left = "-1px";
+                                    URL.revokeObjectURL(iframeUrl);
+                                }
+                            }
+
+                            // Add a delay for Firefox
+                            if (isFirefox)
+                            {
+                                window.setTimeout(printIframe, firefoxDelay);
+                            } else
+                            {
+                                printIframe();
+                            }
+                        });
+
+                        document.body.appendChild(iframe);
+                    }
+                });
+
+                xhr.open("GET", url, true);
+                xhr.send();
+            };
+        })();
+    </script>
+
+    <script>
+
+    </script>
+</body>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/print-js/1.6.0/print.css"
+    integrity="sha512-tKGnmy6w6vpt8VyMNuWbQtk6D6vwU8VCxUi0kEMXmtgwW+6F70iONzukEUC3gvb+KTJTLzDKAGGWc1R7rmIgxQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+</html>
