@@ -1,0 +1,34 @@
+#nav-bar{
+    border-bottom: 1px black solid;
+    padding: 0px 10px 0px 10px;
+}
+
+#nav-btn{
+    border: 1px black solid;
+    width: 20em;
+    margin: auto;
+    margin-top: 15px;
+    background-color: rgb(238, 238, 238);
+    text-decoration: none;
+    color: black;
+    width: 10%;
+    display: inline-block;
+    text-align: center;
+}
+#nav-btn:hover{
+    background-color: rgb(199, 199, 199);
+}
+#nav-bar h1{
+    display: inline-block;
+    padding-left: 10%;
+    margin-right: 3%;
+    color: black;
+    text-align: center;
+}
+
+html, body{
+    height: 100vh;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}

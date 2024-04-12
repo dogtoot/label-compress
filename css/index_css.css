@@ -1,22 +1,11 @@
 #canvas {
     margin: auto;
+}
+#canvas-box{
+    margin: auto;
     display: flex;
-}
-
-html, body{
-    height: 100vh;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-}
-
-#canvas-padding-top,
-#canvas-padding-bottom {
-    width: 100px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 0;
-    margin-bottom: 0;
+    justify-content: center;
+    align-items: center;
 }
 
 input[type=file] {
@@ -24,11 +13,20 @@ input[type=file] {
 }
 
 #file-btn {
-    display: none;
+    border: 1px black solid;
+    width: 20em;
+    margin: auto;
+    margin-top: 15px;
+    background-color: rgb(238, 238, 238);
+    text-decoration: none;
+    color: black;
+    width: 10%;
+    display: inline-block;
+    text-align: center;
 }
 
 #file-btn:hover {
-    background-color: gray;
+    background-color: rgb(199, 199, 199);
     cursor: pointer;
 }
 
@@ -48,4 +46,28 @@ footer{
 
 button{
     cursor: pointer;
+}
+#text-center{
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+hr{
+    margin-top: 30px;
+}
+
+#downloadLink, #printLink{
+    border: 1px black solid;
+    width: 20em;
+    margin: auto;
+    margin-top: 15px;
+    background-color: rgb(238, 238, 238);
+    text-decoration: none;
+    color: black;
+}
+
+#downloadLink:hover, #printLink:hover{
+    background-color: rgb(199, 199, 199);
 }

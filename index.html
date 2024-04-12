@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LabelCompress - Static</title>
+    <title>Compress - LabelCompress</title>
 
     <link rel="stylesheet" href="css/index_css.css">
+    <link rel="stylesheet" href="css/site.css">
     
     <script src="./javascript/site.js" type="module"></script>
     <script src="./javascript/print.js"></script>
@@ -15,10 +16,35 @@
     <script src="https://cozmo.github.io/jsQR/jsQR.js"></script>
 </head>
 <body>
+    <nav id="nav-bar">
+        <a href="index.html"><h1>Label Compress</h1></a>
+        <a href="index.html" id="nav-btn">Compress</a>
+        <a href="instructions.html" id="nav-btn">Instructions</a>
+    </nav>
     <div id="wrapper">
+        <div id="text-center">
+            <br>
+            <input type="file" id="file-pdf" accept=".pdf">
+            <!--<button onclick="openFileDialogue()">--><label for="file-pdf" id="file-btn">Select a file</label><!--Select a file</button>-->
+            <span id="file-name">&nbsp;No file chosen.</span>
+            <br>
+            <label for="first" id="degrees">Degrees: </label>
+            <input type="radio" name="radio" class="rotational" id="first" value="0">0&deg;
+            <input type="radio" name="radio" class="rotational" value="90">90&deg;
+            <input type="radio" name="radio" class="rotational" value="180">180&deg;
+            <input type="radio" name="radio" class="rotational" value="270">270&deg;
+            <input type="radio" name="radio" class="rotational" value="360">360&deg;
+            <a id="downloadLink" style="display: none;">Download Rotated PDF</a>
+            <a id="printLink" style="display: none;" href="#" onclick="return false;">Print Rotated PDF</a>
+            <br>
+        </div>
+        <h3 id="preview" style="text-align: center;">Preview</h3>
+        <div id="canvas-box">
+            <canvas class="image_canvas" id="canvas" style="border:1px solid black"></canvas>
+        </div>
         <div class="cookies" name="cookie-popup" id="cookies">
-            <h3>Cookies</h3>
             <hr>
+            <h3>Cookies</h3>
             <p>This website uses cookies to save your preferences.</p>
             <button value="false" class="cookie-consent-deny cookiesbtn" id="dontallow">Deny Cookies</button>
             <button value="true" class="cookie-consent-allow cookiesbtn" id="allow">Allow Cookies</button>
@@ -26,25 +52,6 @@
             <br>
             <br>
         </div>
-        <br>
-        <input type="file" id="file-pdf" accept=".pdf">
-        <button onclick="openFileDialogue()"><label for="file-pdf" id="file-btn"></label>Select a file</button>
-        <span id="file-name">&nbsp;No file chosen.</span>
-        <p>Recommended print size is: 11" x 17"&nbsp;&nbsp;&nbsp;&nbsp; If you need help, let me know <a href="https://github.com/dogtoot/StaticCompress/issues">here</a> and i will try to get back to you.</p>
-        <br>
-        <label for="first" id="degrees">Degrees: </label>
-        <input type="radio" name="radio" class="rotational" id="first" value="0">0&deg;
-        <input type="radio" name="radio" class="rotational" value="90">90&deg;
-        <input type="radio" name="radio" class="rotational" value="180">180&deg;
-        <input type="radio" name="radio" class="rotational" value="270">270&deg;
-        <input type="radio" name="radio" class="rotational" value="360">360&deg;
-        <a id="downloadLink" style="display: none;">Download Rotated PDF</a>
-        <a id="printLink" style="display: none;" href="#" onclick="return false;">Print Rotated PDF</a>
-        <br>
-        <h3 id="preview" style="text-align: center;">Preview</h3>
-        <div id="canvas-padding-top" hidden></div>
-        <canvas class="image_canvas" id="canvas" style="border:1px solid black"></canvas>
-        <div id="canvas-padding-bottom" hidden></div>
     </div>
     <footer id="footer">
         

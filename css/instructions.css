@@ -1,0 +1,13 @@
+#text-center{
+    width: 80%;
+    height: 100%;
+    margin: auto;
+}
+
+li{
+    padding-bottom: 8px;
+}
+
+ul{
+    list-style: none;
+}

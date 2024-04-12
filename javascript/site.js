@@ -277,19 +277,24 @@ function loadCookies()
             {
                 percent = "50%";
             }
-            canv.style.height = imageHeightGlobal * .7 + "px";
-            canv.style.width = imageWidthGlobal * .7 + "px";
 
-            padding_top.style.height = (canv.clientHeight / 80) + "rem";
-            padding_bottom.style.height = (canv.clientHeight / 70) + "rem";
-            padding_top.style.marginLeft = "auto";
-            padding_top.style.marginRight = "auto";
-            padding_bottom.style.marginLeft = "auto";
-            padding_bottom.style.marginRight = "auto";
-            padding_top.hidden = false;
-            padding_bottom.hidden = false;
+            
+            let canvasbox = document.getElementById("canvas-box");
+            if(rotcanvas == 270 || rotcanvas ==90){
+                canv.style.height = imageHeightGlobal * .5 + "px";
+                canv.style.width = imageWidthGlobal * .5 + "px";
+                canvasbox.style.height = canv.clientWidth + "px";
+                canvasbox.style.width = canv.clientHeight + "px";
+            }
+            else{
+                canv.style.height = imageHeightGlobal * .7 + "px";
+                canv.style.width = imageWidthGlobal * .7 + "px";
+                canvasbox.style.height = canv.clientHeight + "px";
+                canvasbox.style.width = canv.clientWidth + "px";
+            }
 
-            preview.style.marginBottom = "50px";
+            canv.style.transform = "rotate(" + rotcanvas + "deg)";
+            canv.style.transformOrigin = "50% 50%";
         }
         else if (file != undefined)
         {
@@ -297,10 +302,6 @@ function loadCookies()
             canv.style.width = imageWidthGlobal * .7 + "px";
             padding_top.style.height = "0px";
             padding_bottom.style.height = "0px";
-        }
-        if (file != undefined)
-        {
-            canv.style.transform = "rotate(" + rotcanvas + "deg)";
         }
     }
 
