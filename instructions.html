@@ -7,35 +7,55 @@
 
     <link rel="stylesheet" href="css/site.css">
     <link rel="stylesheet" href="css/instructions.css">
+    <script src="./javascript/darkmode.js" type="module"></script>
+    <script src="./javascript/cookies.js" type="module"></script>
 </head>
-<body>
-    <nav id="nav-bar">
-        <a href="index.html"><h1>Label Compress</h1></a>
-        <a href="index.html" id="nav-btn">Compress</a>
-        <a href="instructions.html" id="nav-btn">Instructions</a>
-    </nav>
-    <div id="text-center">
-        <p>Recommended print size is: 11" x 17"</p>
-        <p>If you have an issue with the website, let me know <a href="https://github.com/dogtoot/StaticCompress/issues">here</a></p>
-        <h3>Instuctions</h3>
-        <ol>
-            <li>Press the "Select a File" button.</li>
-            <li>Select the label you wish to compress.</li>
-            <li>Next to "Degrees: " there are four buttons, select one of the buttons to rotate the PDF to the button's corresponding degree value.</li>
-            <li>After selecting your rotational value, look at the preview to ensure the PDF looks correct.</li>
-            <li>Finally, select either the "Download Rotated PDF" to download the PDF, or the "Print Rotated PDF" to attempt to open your computer's print dialogue.</li>
-        </ol>
-        <h3>Video Instructions</h3>
-        <ul>
-            <li>
-                <video width="320" height="240" controls>
-                    <source src="movie.mp4" type="video/mp4">
-                    <source src="movie.ogg" type="video/ogg">
-                    Your browser does not support the video tag.
-                  </video>
-            </li>
-        </ul>
-
+<body id="bodyID">
+    <div id="wrapper">
+        <nav id="nav-bar">
+            <a href="index.html" id="title"><h1 id="title" class="title">Label Compress</h1></a>
+            <a href="index.html" id="nav-btn1" class="nav-btn">Compress</a>
+            <a href="instructions.html" id="nav-btn2" class="nav-btn">Instructions</a>
+            <div id="sliderDiv">
+                <label class="switch">
+                    <input id="slider" type="checkbox">
+                    <span id="sliderRound" class="slider round"></span>
+                </label>
+            </div>
+            <span id="labelforslider">Enable Darkmode</span>
+        </nav>
+        <div id="text-center">
+            <p>Recommended print size is: 11" x 17"</p>
+            <p>If you have an issue with the website, let me know <a href="https://github.com/dogtoot/StaticCompress/issues">here</a></p>
+            <h3>Instuctions</h3>
+            <ol>
+                <li>Press the "Select a File" button.</li>
+                <li>Select the label you wish to compress.</li>
+                <li>Next to "Degrees: " there are four buttons, select one of the buttons to rotate the PDF to the button's corresponding degree value.</li>
+                <li>After selecting your rotational value, look at the preview to ensure the PDF looks correct.</li>
+                <li>Finally, select either the "Download Rotated PDF" to download the PDF, or the "Print Rotated PDF" to attempt to open your computer's print dialogue.</li>
+            </ol>
+            <h3>Video Instructions</h3>
+            <ul>
+                <li>
+                    <video width="320" height="240" controls>
+                        <source src="movie.mp4" type="video/mp4">
+                        <source src="movie.ogg" type="video/ogg">
+                        Your browser does not support the video tag.
+                      </video>
+                </li>
+            </ul>
+        </div>
+        <div class="cookies" name="cookie-popup" id="cookies" hidden>
+            <hr>
+            <h3>Cookies</h3>
+            <p>This website uses cookies to save your preferences.</p>
+            <button value="false" class="cookie-consent-deny cookiesbtn" id="dontallow">Deny Cookies</button>
+            <button value="true" class="cookie-consent-allow cookiesbtn" id="allow">Allow Cookies</button>
+            <hr>
+            <br>
+            <br>
+        </div>
     </div>
 </body>
 </html>

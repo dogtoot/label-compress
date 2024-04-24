@@ -23,6 +23,7 @@ input[type=file] {
     width: 10%;
     display: inline-block;
     text-align: center;
+    min-width: 90px;
 }
 
 #file-btn:hover {
@@ -54,10 +55,6 @@ button{
     text-align: center;
 }
 
-hr{
-    margin-top: 30px;
-}
-
 #downloadLink, #printLink{
     border: 1px black solid;
     width: 20em;
@@ -70,4 +67,10 @@ hr{
 
 #downloadLink:hover, #printLink:hover{
     background-color: rgb(199, 199, 199);
+}
+
+@media only screen and (max-width: 690px) {
+    #file-btn{
+        display: block;
+    }
 }
