@@ -83,15 +83,28 @@ function loadCookies()
 
     if(allowCookies == true){
         let cookiePreset = getCookie("darkmode");
-        if(cookiePreset == "true"){
-            document.getElementById("bodyID").classList.add('darkmode');
-            document.getElementById("labelforslider").textContent = "Disable Darkmode"
+        if(cookiePreset == "true")    
+        {
             document.getElementById("slider").checked = true;
+            document.getElementById("bodyID").classList.add('darkmode');
+            document.getElementById("titleH1").classList.add("darkmodetitle");
+            document.getElementById("labelforslider").textContent = "Disable Darkmode"
+    
+            if(document.title.includes("Instructions - ")){
+                document.getElementById("link").classList.remove("link");
+                document.getElementById("link").classList.add("darklink");
+            }
         }
-        else{
+        else
+        {
             document.getElementById("bodyID").classList.remove('darkmode');
+            document.getElementById("titleH1").classList.remove("darkmodetitle");
             document.getElementById("labelforslider").textContent = "Enable Darkmode"
-            document.getElementById("slider").checked = false;
+    
+            if(document.title.includes("Instructions - ")){
+                document.getElementById("link").classList.remove("darklink");
+                document.getElementById("link").classList.add("link");
+            }
         }
     }
 }

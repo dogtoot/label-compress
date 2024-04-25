@@ -45,6 +45,7 @@ hr{
 .darkmode{
     color: rgb(211, 211, 211);
     background-color: rgb(37, 45, 78);
+    text-decoration-color: aqua;
 }
 
 .title{
@@ -54,6 +55,22 @@ hr{
     color: black;
     text-align: center;
 }
+
+.link{
+    color: rgb(253, 22, 253);
+}
+.darklink{
+    color: aqua;
+}
+
+.darkmodetitle{
+    color: rgb(211, 211, 211);
+    display: inline-block;
+    padding-left: 10%;
+    margin-right: 3%;
+    text-align: center;
+}
+
 
 #sliderDiv{
     display: inline-block;
@@ -154,11 +171,20 @@ hr{
     #nav-bar{
         text-align: center;
     }
-    #nav-bar h1, #title{
+    .title, #title{
         display: block;
         padding-left: 0;
         margin-right: 0;
         color: black;
+        text-align: center;
+        text-decoration: none;
+    }
+
+    .darkmodetitle{
+        color: rgb(211, 211, 211);
+        display: block;
+        padding-left: 0;
+        margin-right: 0;
         text-align: center;
         text-decoration: none;
     }
