@@ -3,6 +3,87 @@
 let imageWidthGlobal;
 let imageHeightGlobal;
 
+document.getElementById("text-center").addEventListener("drop", event=>{
+    dropHandler(event);
+    document.getElementById("text-center").classList.remove("dropzone");
+    if(document.getElementById("bodyID").classList.contains("darkmode")){
+        document.getElementById("text-center").style.color = "rgb(211, 211, 211)";
+    }
+    else{
+        document.getElementById("text-center").style.color = "black";
+    }
+    document.getElementById("dropzoneTitle").hidden = true;
+    document.getElementById("textBreak").hidden = false;
+})
+
+document.getElementById("text-center").addEventListener("dragover", event=>{
+    dragOverHandler(event);
+    console.log("File(s) in drop zone");
+    document.getElementById("text-center").classList.add("dropzone");
+    document.getElementById("text-center").style.color = "black";
+    document.getElementById("dropzoneTitle").hidden = false;
+    document.getElementById("textBreak").hidden = true;
+})
+
+document.getElementById("slider").addEventListener("change", event=>{
+    if(document.getElementById("bodyID").classList.contains("darkmode")){
+        document.getElementById("text-center").style.color = "rgb(211, 211, 211)";
+    }
+    else{
+        document.getElementById("text-center").style.color = "black";
+    }
+})
+
+document.getElementById("bodyID").addEventListener("dragover", event=>{
+    document.getElementById("text-center").classList.remove("dropzone");
+    if(document.getElementById("bodyID").classList.contains("darkmode")){
+        document.getElementById("text-center").style.color = "rgb(211, 211, 211)";
+    }
+    else{
+        document.getElementById("text-center").style.color = "black";
+    }
+    document.getElementById("dropzoneTitle").hidden = true;
+    document.getElementById("textBreak").hidden = false;
+})   
+function dragOverHandler(ev) {
+
+    // Prevent default behavior (Prevent file from being opened)
+    ev.preventDefault();
+    ev.stopPropagation();
+}
+document.getElementById("text-center").classList.remove("dropzone");
+function dropHandler(ev) {
+    console.log("File(s) dropped");
+  
+    // Prevent default behavior (Prevent file from being opened)
+    let file;
+    ev.preventDefault();
+    const fileInput = document.querySelector('input[type="file"]')
+    if (ev.dataTransfer.items) {
+      // Use DataTransferItemList interface to access the file(s)
+      [...ev.dataTransfer.items].forEach((item, i) => {
+        // If dropped items aren't files, reject them
+        if (item.kind === "file") {
+          file = item.getAsFile();
+          console.log(`… file[${i}].name = ${file.name}`);
+        }
+      });
+    } else {
+      // Use DataTransfer interface to access the file(s)
+      [...ev.dataTransfer.files].forEach((file, i) => {
+        console.log(`… file[${i}].name = ${file.name}`);
+        file = file.getAsFile();
+      });
+    }
+
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    fileInput.files = dataTransfer.files;
+    console.log(document.getElementById("file-pdf").file);
+    console.log(fileInput.value)
+    fileLoad(file);
+  }
+
 function base64ToArrayBuffer(base64)
 {
     var binaryString = atob(base64);
@@ -185,20 +266,25 @@ input.onclick = function ()
     this.value = null;
 };
 
-input.addEventListener('input', event =>
+input.addEventListener('change', event =>
 {
-    file = event.target.files[0];
-    document.getElementById("file-name").textContent = file.name;
+    fileLoad(event.target.files[0]);
+});
+
+function fileLoad(fileData){
+    file = fileData;
     if (file.type !== 'application/pdf')
     {
         alert(`File ${file.name} is not a PDF file type`);
         return;
     }
-
-    const fileReader = new FileReader();
-    fileReader.onload = onLoadFile;
-    fileReader.readAsArrayBuffer(file);
-});
+    else{
+        document.getElementById("file-name").textContent = file.name;
+        const fileReader = new FileReader();
+        fileReader.onload = onLoadFile;
+        fileReader.readAsArrayBuffer(file);
+    }
+}
 
 document.getElementById("printLink").addEventListener("click", event =>
 {

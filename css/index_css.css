@@ -53,6 +53,8 @@ button{
     margin-left: auto;
     margin-right: auto;
     text-align: center;
+    border: 5px dashed rgb(173, 173, 173);
+    border-radius: 50px;
 }
 
 #downloadLink, #printLink{
@@ -69,8 +71,29 @@ button{
     background-color: rgb(199, 199, 199);
 }
 
+.dropzone * 
+{
+    pointer-events: none;
+}
+
+.dropzone{
+    background-color: rgb(218, 218, 218);
+}
+.dropzone:hover{
+    cursor: move !important;
+}
+
+#dropzoneTitle{
+    color: rgb(131, 131, 131);
+    font-size: larger;
+    font-weight: bold;
+}
+
 @media only screen and (max-width: 690px) {
     #file-btn{
         display: block;
+    }
+    #text-center{
+        border: none;
     }
 }
