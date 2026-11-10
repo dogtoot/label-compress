@@ -1,93 +1,27 @@
-/**
-         * Prints a PDF in a browser using a hidden iframe. Works in recent versions of Firefox, Chrome, Safari and Edge. Does
-         * not work in IE 11 and instead attempts to open the PDF in a new tab.
-         *
-         * Note that the PDF URL must come from the same domain as the page including this file because of the same-origin
-         * policy.
-         *
-         * Usage: printPdf(url)
-         */
-var printPdf = (function ()
-{
-    // Firefox requires a delay between loading the iframe and calling print(), otherwise it fails with an uncatchable
-    // error. This makes it a rare case where user agent sniffing is justified.
-    var isFirefox = /Gecko\/\d/.test(navigator.userAgent);
+function printPdf(url) {
+    fetch(url)
+        .then((res) => res.blob())
+        .then((blob) => {
+            const blobUrl = URL.createObjectURL(blob);
 
-    // Specify the aforementioned delay for Firefox. 1000 seems to work. 100 is not enough.
-    var firefoxDelay = 1000;
+            const iframe = document.createElement("iframe");
+            iframe.style.display = "none";
+            iframe.src = blobUrl;
 
-    var iframe;
+            iframe.onload = () => {
+                iframe.focus();
+                iframe.contentWindow.print();
 
-    return function (url)
-    {
-        // Remove iframe from any previous call
-        if (iframe)
-        {
-            iframe.parentNode.removeChild(iframe);
-        }
+                // Cleanup after a short delay
+                setTimeout(() => {
+                    URL.revokeObjectURL(blobUrl);
+                    iframe.remove();
+                }, 1000);
+            };
 
-        iframe = document.createElement("iframe");
-        iframe.style.cssText = "width: 1px; height: 100px; position: fixed; left: 0; top: 0; opacity: 0; border-width: 0; margin: 0; padding: 0";
-
-        var xhr = new XMLHttpRequest();
-        try
-        {
-            xhr.responseType = "arraybuffer";
-        } catch (e)
-        {
-            // This is probably IE 11, in which case we can go no further and just open the PDF in a new tab
-            window.open(url, "_blank");
-            return;
-        }
-
-        xhr.addEventListener("load", function ()
-        {
-            if (xhr.status === 200 || xhr.status === 201)
-            {
-                var pdfBlob = new Blob([xhr.response], { type: "application/pdf" });
-                var iframeUrl = URL.createObjectURL(pdfBlob);
-                iframe.src = iframeUrl;
-
-                iframe.addEventListener("load", function ()
-                {
-                    function printIframe()
-                    {
-                        try
-                        {
-                            iframe.focus()
-                            try
-                            {
-                                iframe.contentWindow.document.execCommand("print", false, null);
-                            } catch (e)
-                            {
-                                iframe.contentWindow.print();
-                            }
-                        } catch (error)
-                        {
-                            console.error("Print failed: " + error, error);
-                        } finally
-                        {
-                            iframe.style.visibility = "hidden";
-                            iframe.style.left = "-1px";
-                            URL.revokeObjectURL(iframeUrl);
-                        }
-                    }
-
-                    // Add a delay for Firefox
-                    if (isFirefox)
-                    {
-                        window.setTimeout(printIframe, firefoxDelay);
-                    } else
-                    {
-                        printIframe();
-                    }
-                });
-
-                document.body.appendChild(iframe);
-            }
+            document.body.appendChild(iframe);
+        })
+        .catch((err) => {
+            console.error("Failed to print PDF:", err);
         });
-
-        xhr.open("GET", url, true);
-        xhr.send();
-    };
-})();
+}
