@@ -1,3 +1,5 @@
+import { els } from "./dom.js"
+
 document.getElementById("slider").addEventListener('click', () =>
 {
     EnableDarkMode();
@@ -6,7 +8,6 @@ document.getElementById("slider").addEventListener('click', () =>
 
 function EnableDarkMode()
 {
-    let darkmode = false;
     var slider = document.getElementById("slider");
     console.log(slider.checked);
     if (slider.checked == true)
@@ -33,3 +34,12 @@ function EnableDarkMode()
     }
 
 }
+
+export function resetTextColor(){
+    els.textCenter.style.color = els.body.classList.contains("darkmode")
+        ? "rgb(211, 211, 211)" : "black";
+}
+
+els.slider.addEventListener("change", (event) => {
+    resetTextColor();
+});

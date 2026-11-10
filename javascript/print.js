@@ -1,27 +1,24 @@
-function printPdf(url) {
-    fetch(url)
-        .then((res) => res.blob())
-        .then((blob) => {
-            const blobUrl = URL.createObjectURL(blob);
+let printFrame = null;
+let printUrl = null;
 
-            const iframe = document.createElement("iframe");
-            iframe.style.display = "none";
-            iframe.src = blobUrl;
+async function printPdf(url) {
+    const response = await fetch(url);
+    const blob = await response.blob();
 
-            iframe.onload = () => {
-                iframe.focus();
-                iframe.contentWindow.print();
+    if (printFrame) printFrame.remove();
+    if (printUrl) URL.revokeObjectURL(printUrl);
 
-                // Cleanup after a short delay
-                setTimeout(() => {
-                    URL.revokeObjectURL(blobUrl);
-                    iframe.remove();
-                }, 1000);
-            };
+    printUrl = URL.createObjectURL(blob);
 
-            document.body.appendChild(iframe);
-        })
-        .catch((err) => {
-            console.error("Failed to print PDF:", err);
-        });
+    const iframe = document.createElement("iframe");
+    iframe.style.display = "none";
+    iframe.src = printUrl;
+
+    iframe.onload = () => {
+        iframe.contentWindow.focus();
+        iframe.contentWindow.print();
+    };
+
+    document.body.appendChild(iframe);
+    printFrame = iframe;
 }
