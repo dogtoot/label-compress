@@ -2,12 +2,26 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+html.darkmode {
+    background: rgb(37, 45, 78);
+    color: rgb(211, 211, 211);
+    color-scheme: dark;
+}
+
+html.darkmode body {
+    background: rgb(37, 45, 78);
+}
+
+#canvas-box { position: relative; }
+#cropOverlay { position: absolute; margin: 0; touch-action: none; }
+
 #nav-bar {
   border-bottom: 1px black solid;
   padding: 0px 10px 0px 10px;
 }
 
 .nav-btn {
+  border:none;
   border-bottom: 1px black solid;
   width: 20em;
   margin: auto;
@@ -19,12 +33,65 @@
   display: inline-block;
   text-align: center;
   min-width: 200px;
+}
 
+fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
 }
 
 .nav-btn:hover {
   background-color: rgb(199, 199, 199);
   box-shadow: 3px 3px 2px rgba(0, 0, 0, 0.24);
+}
+
+.nav-btn:disabled {
+  background-color: rgb(238, 238, 238);
+  color: #999;
+  border-bottom-color: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+  opacity: 0.6;
+}
+
+.nav-btn:disabled:hover {
+  background-color: rgb(238, 238, 238);
+  box-shadow: none;
+}
+
+.save-btn {
+  border: none;
+  border-bottom: 1px black solid;
+  width: 20em;
+  margin: auto;
+  margin-top: 15px;
+  background-color: rgb(238, 238, 238);
+  text-decoration: none;
+  color: black;
+  width: 5%;
+  display: inline-block;
+  text-align: center;
+  min-width: 45px;
+}
+
+.save-btn:hover {
+  background-color: rgb(199, 199, 199);
+  box-shadow: 3px 3px 2px rgba(0, 0, 0, 0.24);
+}
+
+.save-btn:disabled {
+  background-color: rgb(238, 238, 238);
+  color: #999;
+  border-bottom-color: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+  opacity: 0.6;
+}
+
+.save-btn:disabled:hover {
+  background-color: rgb(238, 238, 238);
+  box-shadow: none;
 }
 
 html,
@@ -155,6 +222,20 @@ input:checked+.slider:before {
 #labelforslider {
   display: inline-block;
 }
+
+.centered{
+  width: 100%;
+  margin: auto;
+}
+
+.centered button{
+  margin: auto;
+}
+
+.crop-box{
+  width: 30px;
+}
+
 
 @media only screen and (max-width: 910px) {
   #sliderDiv {

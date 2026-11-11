@@ -16,7 +16,7 @@ export async function loadPdf(file) {
     const pages = await Promise.all(
         Array.from({ length: pdf.numPages }, (_, i) => getPageImages(i + 1, pdf)),
     );
-    return pages.flat();
+    return { pdf, images: pages.flat() };
 }
 
 const getObj = (page, name) =>

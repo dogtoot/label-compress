@@ -1,24 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    <script>
+        (function ()
+        {
+            var m = document.cookie.match(/(?:^|; )darkmode=([^;]*)/);
+            if (m && m[1] === "true")
+            {
+                document.documentElement.classList.add("darkmode");
+            }
+        })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Compress - LabelCompress</title>
 
     <link rel="stylesheet" href="css/index_css.css">
     <link rel="stylesheet" href="css/site.css">
-    
+
     <script src="./javascript/site.js" type="module"></script>
     <script src="./javascript/print.js"></script>
-    <script src="./javascript/html.js"></script>
-    <script src="./javascript/darkmode.js" type="module"></script>
     <script src="./javascript/cookies.js" type="module"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.worker.min.js"></script>
     <script src="https://cozmo.github.io/jsQR/jsQR.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+        integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
+
 <body id="bodyID">
     <nav id="nav-bar">
         <a href="index.html" id="title"><h1 id="titleH1" class="title">Label Compress</h1></a>
@@ -34,6 +46,10 @@
     </nav>
     <div id="wrapper">
         <div id="text-center">
+            <div id="tool_select">
+                <button id="auto-crop" class="nav-btn" disabled>Auto-Crop</button>
+                <button id="manu-crop" class="nav-btn">Manual-Crop</button>
+            </div>
             <br id="textBreak">
             <span hidden id="dropzoneTitle">Drop zone<br></span>
             <input type="file" id="file-pdf" accept=".pdf">
@@ -48,6 +64,16 @@
                 <input type="radio" name="radio" class="rotational" value="270">270&deg;
                 <input type="radio" name="radio" class="rotational" value="360">360&deg;
             </div>
+            <div id="crop">
+                <fieldset id="fieldset-crop" disabled>
+                    <label for="presets">Select a crop preset:</label>
+                    <select id="presets">
+                        <option value="none" selected>Default</option>
+                    </select>
+                    <button id="save-preset">Save</button>
+                    <button id="delete-preset">Delete</button>
+                </fieldset>
+            </div>
             <a id="downloadLink" style="display: none;">Download Rotated PDF</a>
             <a id="printLink" style="display: none;" href="#" onclick="return false;">Print Rotated PDF</a>
             <br>
@@ -55,24 +81,16 @@
         <h3 id="preview" style="text-align: center;">Preview</h3>
         <div id="canvas-box">
             <canvas class="image_canvas" id="canvas" style="border:1px solid black"></canvas>
-        </div>
-
-        <div class="cookies" name="cookie-popup" id="cookies" hidden>
-            <hr>
-            <h3>Cookies</h3>
-            <p>This website uses cookies to save your preferences.</p>
-            <button value="false" class="cookie-consent-deny cookiesbtn" id="dontallow">Deny Cookies</button>
-            <button value="true" class="cookie-consent-allow cookiesbtn" id="allow">Allow Cookies</button>
-            <hr>
-            <br>
-            <br>
+            <canvas id="cropOverlay" hidden></canvas>
         </div>
     </div>
     <footer id="footer">
-        
+
     </footer>
 </body>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/print-js/1.6.0/print.css"
     integrity="sha512-tKGnmy6w6vpt8VyMNuWbQtk6D6vwU8VCxUi0kEMXmtgwW+6F70iONzukEUC3gvb+KTJTLzDKAGGWc1R7rmIgxQ=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="./javascript/html.js"></script>
+
 </html>

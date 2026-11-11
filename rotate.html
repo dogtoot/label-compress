@@ -1,0 +1,35 @@
+
+<div id="text-center">
+    <br id="textBreak">
+    <span hidden id="dropzoneTitle">Drop zone<br></span>
+    <input type="file" id="file-pdf" accept=".pdf">
+    <label for="file-pdf" id="file-btn">Select a file</label>
+    <span id="file-name">&nbsp;No file chosen.</span>
+    <br>
+    <div id="degrees">
+        <label for="first" id="degrees">Degrees: </label><br id="degreebreak" hidden>
+        <input type="radio" name="radio" class="rotational" id="first" value="0">0&deg;
+        <input type="radio" name="radio" class="rotational" value="90">90&deg;
+        <input type="radio" name="radio" class="rotational" value="180">180&deg;
+        <input type="radio" name="radio" class="rotational" value="270">270&deg;
+        <input type="radio" name="radio" class="rotational" value="360">360&deg;
+    </div>
+    <a id="downloadLink" style="display: none;">Download Rotated PDF</a>
+    <a id="printLink" style="display: none;" href="#" onclick="return false;">Print Rotated PDF</a>
+    <br>
+</div>
+<h3 id="preview" style="text-align: center;">Preview</h3>
+<div id="canvas-box">
+    <canvas class="image_canvas" id="canvas" style="border:1px solid black"></canvas>
+</div>
+
+<div class="cookies" name="cookie-popup" id="cookies" hidden>
+    <hr>
+    <h3>Cookies</h3>
+    <p>This website uses cookies to save your preferences.</p>
+    <button value="false" class="cookie-consent-deny cookiesbtn" id="dontallow">Deny Cookies</button>
+    <button value="true" class="cookie-consent-allow cookiesbtn" id="allow">Allow Cookies</button>
+    <hr>
+    <br>
+    <br>
+</div>

@@ -25,3 +25,24 @@ export async function buildRotatedPdf(pngBase64, width, height, deg) {
     const bytes = await pdfDoc.save();
     return new Blob([bytes], { type: "application/pdf" });
 }
+
+export async function buildManualPdf(file, { deg, crop }) {
+    const pdfDoc = await PDFDocument.load(await file.arrayBuffer());
+
+    for (let i = pdfDoc.getPageCount() - 1; i > 0; i--) pdfDoc.removePage(i);
+    const page = pdfDoc.getPage(0);
+
+    if (crop) {
+        const b = page.getCropBox();
+        page.setCropBox(
+            b.x + crop.x * b.width,
+            b.y + b.height - (crop.y + crop.h) * b.height,
+            crop.w * b.width,
+            crop.h * b.height,
+        );
+    }
+
+    page.setRotation(degrees((page.getRotation().angle + Number(deg)) % 360));
+
+    return new Blob([await pdfDoc.save()], { type: "application/pdf" });
+}

@@ -6,5 +6,6 @@ export const els = {
     slider: document.getElementById("slider"),
     canvas: document.getElementById("canvas"),
     canvasBox: document.getElementById("canvas-box"),
-    fileInput: document.getElementById("file-pdf")
+    fileInput: document.getElementById("file-pdf"),
+    cropOverlay: document.getElementById("cropOverlay"),
 };

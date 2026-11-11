@@ -1,118 +1,52 @@
-let allowCookies = false;
+const EXPIRE_MS = 120 * 24 * 60 * 60 * 1000;
 
-let cookiesDiv = document.getElementById("cookies");
-let allowCookiesbtn = document.getElementById("allow");
-let denyCookiesbtn = document.getElementById("dontallow");
-
-allowCookiesbtn.addEventListener("click", () => {
-    cookiesDiv.hidden = true;
-    allowCookies = true;
-    const expiry = new Date();
-    expiry.setTime(expiry.getTime() + 120 * 24 * 60 * 60 * 1000);
-    document.cookie =
-        "allowcookies=" + allowCookies + ";" + "expires=" + expiry;
-});
-
-denyCookiesbtn.addEventListener("click", () => {
-    cookiesDiv.hidden = true;
-});
-
-function getCookie(cname) {
-    let name = cname + "=";
-    let decodedCookie = decodeURIComponent(document.cookie);
-    let ca = decodedCookie.split(";");
-    for (let i = 0; i < ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) == " ") {
-            c = c.substring(1);
-        }
-        if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
-        }
-    }
-    return "";
+function setCookie(name, value) {
+    const expires = new Date(Date.now() + EXPIRE_MS).toUTCString();
+    document.cookie = `${name}=${value}; expires=${expires}; path=/; SameSite=Lax`;
 }
 
-const body = document.body;
-body.onload = function () {
-    loadCookies();
-};
-
-function loadCookies() {
-    console.log("hello");
-    if (getCookie("allowcookies") == "true") {
-        allowCookies = true;
-        cookiesDiv.hidden = true;
-    } else {
-        cookiesDiv.hidden = false;
-    }
-
-    if (allowCookies == true && document.title.includes("Compress - ")) {
-        let cookiePreset = getCookie("rotational");
-        let rotational = document.getElementsByClassName("rotational");
-        console.log(rotational);
-        console.log(cookiePreset);
-        for (let item of rotational) {
-            if (
-                cookiePreset != "" &&
-                document.title.includes("Compress - ") &&
-                item.value == cookiePreset
-            ) {
-                item.checked = true;
-            } else {
-                document.getElementById("first").checked = true;
-            }
-        }
-        console.log(rotational);
-    } else if (document.title.includes("Compress - ")) {
-        document.getElementById("first").checked = true;
-    }
-
-    if (allowCookies == true) {
-        let cookiePreset = getCookie("darkmode");
-        if (cookiePreset == "true") {
-            document.getElementById("slider").checked = true;
-            document.getElementById("bodyID").classList.add("darkmode");
-            document.getElementById("titleH1").classList.add("darkmodetitle");
-            document.getElementById("labelforslider").textContent =
-                "Disable Darkmode";
-
-            if (document.title.includes("Instructions - ")) {
-                document.getElementById("link").classList.remove("link");
-                document.getElementById("link").classList.add("darklink");
-            }
-        } else {
-            document.getElementById("bodyID").classList.remove("darkmode");
-            document
-                .getElementById("titleH1")
-                .classList.remove("darkmodetitle");
-            document.getElementById("labelforslider").textContent =
-                "Enable Darkmode";
-
-            if (document.title.includes("Instructions - ")) {
-                document.getElementById("link").classList.remove("darklink");
-                document.getElementById("link").classList.add("link");
-            }
-        }
-    }
-}
-
-document.getElementById("slider").addEventListener("click", () => {
-    CreateDarkmodeCookie();
-});
-
-function CreateDarkmodeCookie() {
-    if (allowCookies == true) {
-        console.log(slider.checked);
-        const expiry = new Date();
-        expiry.setTime(expiry.getTime() + 120 * 24 * 60 * 60 * 1000);
-        document.cookie =
-            "darkmode=" + slider.checked + ";" + "expires=" + expiry;
-    }
+function getCookie(name) {
+    const hit = document.cookie
+        .split("; ")
+        .find((c) => c.startsWith(name + "="));
+    return hit ? decodeURIComponent(hit.slice(name.length + 1)) : "";
 }
 
 export function saveRotationCookie(rot) {
-    const expiry = new Date();
-    expiry.setTime(expiry.getTime() + 120 * 24 * 60 * 60 * 1000);
-    document.cookie = "rotational=" + rot + ";" + "expires=" + expiry;
+    setCookie("rotational", rot);
 }
+
+function loadCookies() {
+    const isCompress = document.title.includes("Compress - ");
+    const isInstructions = document.title.includes("Instructions - ");
+
+    if (isCompress) {
+        const saved = getCookie("rotational");
+        const radios = [...document.getElementsByClassName("rotational")];
+        const match = radios.find((r) => r.value === saved);
+        (match ?? document.getElementById("first")).checked = true;
+    }
+
+    const dark = getCookie("darkmode") === "true";
+    const slider = document.getElementById("slider");
+    slider.checked = dark;
+    document.getElementById("bodyID").classList.toggle("darkmode", dark);
+    document.documentElement.classList.toggle("darkmode", dark);
+    document.getElementById("titleH1").classList.toggle("darkmodetitle", dark);
+    document.getElementById("labelforslider").textContent = dark
+        ? "Disable Darkmode"
+        : "Enable Darkmode";
+
+    if (isInstructions) {
+        const link = document.getElementById("link");
+        link.classList.toggle("darklink", dark);
+        link.classList.toggle("link", !dark);
+    }
+
+    slider.addEventListener("click", () => {
+        setCookie("darkmode", slider.checked);
+        document.documentElement.classList.toggle("darkmode", slider.checked);
+    });
+}
+
+loadCookies();
